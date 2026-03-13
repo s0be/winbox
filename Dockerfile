@@ -1,12 +1,11 @@
-FROM alpine:3.18
+FROM alpine:latest
 LABEL maintainer="r.fekete16@gmail.com"
-ENV WV=3.41 WINEPREFIX=/winbox WINEDLLOVERRIDES="mscoree=" WINEDEBUG=-all DISPLAY=:0
+ENV WV=3.43 WINEPREFIX=/winbox WINEDLLOVERRIDES="mscoree=" WINEDEBUG=-all DISPLAY=:0
 WORKDIR /winbox
 ADD https://download.mikrotik.com/routeros/winbox/$WV/winbox64.exe winbox64.exe
 RUN addgroup wine &&  adduser -D -u 1000 -s /bin/sh wine -G wine \
-    && apk add --update wine ncurses xvfb-run \
+    && apk add --update wine ncurses xvfb-run gosu \
     && fc-cache --really-force --verbose \
-    && apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing gosu \
     && chown -R wine:wine /winbox && chmod 755 /winbox && chmod +g+s /winbox
 RUN gosu wine:wine sh -c 'wineboot -u'
 VOLUME /tmp/.X11-unix /winbox/
